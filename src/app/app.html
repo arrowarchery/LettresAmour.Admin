@@ -1,0 +1,75 @@
+<div style="min-height: 100vh; padding: 40px 16px; display: flex; justify-content: center; align-items: center; box-sizing: border-box;">
+  
+  <div style="max-width: 700px; width: 100%; background: white; border-radius: 16px; padding: 32px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05); border: 1px solid #f1f5f9; box-sizing: border-box;">
+    
+    <div style="text-align: center; margin-bottom: 32px;">
+      <h1 style="font-size: 28px; font-weight: 700; color: #1e293b; margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px;">
+        <span>💌</span> Écrire à Marine
+      </h1>
+      <p style="color: #64748b; margin-top: 8px; font-size: 14px;">
+        Rédige une douce pensée ou planifie une lettre pour plus tard.
+      </p>
+    </div>
+
+    <div nz-form nzLayout="vertical" style="width: 100%;">
+      
+      <div style="margin-bottom: 24px; display: flex; flex-direction: column;">
+        <label style="font-weight: 600; color: #334155; margin-bottom: 8px; font-size: 14px;">Sujet / Titre discret</label>
+        <input 
+          nz-input 
+          type="text" 
+          name="titre" 
+          [(ngModel)]="lettre.titre" 
+          placeholder="Ex: Une petite pensée pour toi..." 
+          nzSize="large" 
+          style="border-radius: 8px; width: 100%; box-sizing: border-box;" />
+      </div>
+
+      <div style="margin-bottom: 24px; display: flex; flex-direction: column;">
+        <label style="font-weight: 600; color: #334155; margin-bottom: 8px; font-size: 14px;">Le message</label>
+        <textarea 
+          nz-input 
+          name="contenu" 
+          [(ngModel)]="lettre.contenu" 
+          [nzAutosize]="{ minRows: 8, maxRows: 15 }" 
+          placeholder="Écris ton texte ici..." 
+          style="border-radius: 8px; padding: 12px; font-size: 15px; width: 100%; box-sizing: border-box;"></textarea>
+      </div>
+
+      <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 32px; box-sizing: border-box;">
+        <label style="display: block; font-weight: 600; color: #334155; margin-bottom: 12px; font-size: 14px;">Moment de l'envoi / Notification</label>
+        
+        <div style="display: flex; align-items: center; gap: 20px; flex-wrap: wrap;">
+          <nz-date-picker
+            [nzShowTime]="{ nzFormat: 'HH:mm' }"
+            nzFormat="dd/MM/yyyy HH:mm"
+            name="dateEnvoi"
+            [(ngModel)]="lettre.dateEnvoi"
+            nzPlaceHolder="Sélectionner date et heure"
+            nzSize="large"
+            style="width: 260px; border-radius: 6px;">
+          </nz-date-picker>
+          
+          <a (click)="programmerPourMaintenant()" style="font-size: 14px; font-weight: 500; color: #1890ff; user-select: none; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+            ⚡ Envoyer immédiatement
+          </a>
+        </div>
+      </div>
+
+      <div>
+        <button 
+          nz-button 
+          nzType="primary" 
+          nzBlock 
+          nzSize="large"
+          [nzLoading]="isSending"
+          (click)="envoyerLettre()"
+          [disabled]="isFormInvalid"
+          style="height: 48px; border-radius: 10px; font-weight: 600; font-size: 16px; width: 100%;">
+          Confirmer et Planifier 💌
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
