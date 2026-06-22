@@ -76,7 +76,7 @@
       📋 Historique & Statuts
     </h2>
 
-    <div *ngIf="historiqueLettres.length === 0" style="text-align: center; color: #94a3b8; padding: 24px; font-style: italic;">
+    <div *ngIf="!historiqueLettres || historiqueLettres.length === 0" style="text-align: center; color: #94a3b8; padding: 24px; font-style: italic;">
       Aucune lettre envoyée pour le moment.
     </div>
 
@@ -93,10 +93,12 @@
           </div>
 
           <div>
-            <span *ngIf="l.statut === 0" style="background: #e2e8f0; color: #475569; font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 20px; display: inline-flex; align-items: center;">📝 Brouillon</span>
-            <span *ngIf="l.statut === 1" style="background: #fee2e2; color: #ef4444; font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 20px; display: inline-flex; align-items: center;">🔒 Planifiée</span>
-            <span *ngIf="l.statut === 2 && l.isLu" style="background: #dcfce7; color: #22c55e; font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 20px; display: inline-flex; align-items: center;">🟢 Lue</span>
-            <span *ngIf="l.statut === 2 && !l.isLu" style="background: #fef9c3; color: #ca8a04; font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 20px; display: inline-flex; align-items: center;">🟡 En attente</span>
+            <span *ngIf="l.statut === 'Brouillon'" style="background: #e2e8f0; color: #475569; font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 20px; display: inline-flex; align-items: center;">📝 Brouillon</span>
+            <span *ngIf="l.statut === 'Programme'" style="background: #fee2e2; color: #ef4444; font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 20px; display: inline-flex; align-items: center;">🔒 Planifiée</span>
+            <span *ngIf="l.statut === 'Envoye' && l.isLu" style="background: #dcfce7; color: #22c55e; font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 20px; display: inline-flex; align-items: center;">🟢 Lue</span>
+            <span *ngIf="l.statut === 'Envoye' && !l.isLu" style="background: #fef9c3; color: #ca8a04; font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 20px; display: inline-flex; align-items: center;">🟡 En attente</span>
+            
+            <span *ngIf="!l.statut" style="background: #e0f2fe; color: #0369a1; font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 20px; display: inline-flex; align-items: center;">✨ En ligne</span>
           </div>
         </div>
 
@@ -109,5 +111,4 @@
       </div>
     </div>
   </div>
-
 </div>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; // 🚀 Ajoute ChangeDetectorRef ici
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -13,7 +13,7 @@ interface LettreDashboard {
   contenu: string;
   dateEnvoi: string;
   isLu: boolean;
-  statut: number; // 0 = Brouillon, 1 = Programme, 2 = Envoye
+  statut: string;
 }
 
 @Component({
@@ -30,19 +30,15 @@ interface LettreDashboard {
   templateUrl: './app.html'
 })
 export class App implements OnInit {
-  lettre = {
-    titre: '',
-    contenu: '',
-    dateEnvoi: null as Date | null
-  };
-
+  lettre = { titre: '', contenu: '', dateEnvoi: null as Date | null };
   isSending = false;
   historiqueLettres: LettreDashboard[] = [];
   lettreSelectionnee: LettreDashboard | null = null;
   
   private apiUrl = 'https://lettres-amour-api-marine.fly.dev/api/lettres'; 
 
-  constructor(private http: HttpClient, private message: NzMessageService) {}
+  // 🚀 Ajoute private cdr: ChangeDetectorRef dans le constructeur
+  constructor(private http: HttpClient, private message: NzMessageService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.chargerHistorique();
@@ -58,17 +54,16 @@ export class App implements OnInit {
   }
 
   chargerHistorique() {
-    this.http.get<any>('https://lettres-amour-api-marine.fly.dev/api/lettres/admin').subscribe({
+    this.http.get<any>(`${this.apiUrl}/admin`).subscribe({
       next: (data) => {
         console.log("🔥 DONNÉES REÇUES DU BACK :", data);
-        
-        // Sécurité : Si FastEndpoints a encapsulé le tableau dans une propriété, on la récupère, sinon on prend data directement
         const tableauLettres = Array.isArray(data) ? data : (data.lettres || data.value || []);
         
-        // On réassigne une nouvelle référence propre pour réveiller le *ngFor d'Angular
         this.historiqueLettres = [...tableauLettres];
-        
-        console.log("📊 Variable historiqueLettres mise à jour :", this.historiqueLettres);
+        this.lettreSelectionnee = null;
+
+        // 🚀 LA LIGNE CRUCIALE : Réveille Angular de force et reconstruit le HTML
+        this.cdr.detectChanges(); 
       },
       error: (err) => {
         console.error("❌ ERREUR HTTP :", err);
@@ -77,29 +72,25 @@ export class App implements OnInit {
   }
 
   selectionnerLettre(l: LettreDashboard) {
-    if (this.lettreSelectionnee?.id === l.id) {
-      this.lettreSelectionnee = null;
-    } else {
-      this.lettreSelectionnee = l;
-    }
+    this.lettreSelectionnee = this.lettreSelectionnee?.id === l.id ? null : l;
+    this.cdr.detectChanges(); // Sécurité ici aussi
   }
 
   envoyerLettre() {
     if (this.isFormInvalid) return;
-
     this.isSending = true;
 
     this.http.post(this.apiUrl, this.lettre).subscribe({
       next: () => {
-        this.message.success('La lettre a bien été enregistrée et planifiée ! ✨', { nzDuration: 4000 });
+        this.message.success('La lettre a bien été enregistrée ! ✨', { nzDuration: 4000 });
         this.lettre = { titre: '', contenu: '', dateEnvoi: null };
         this.isSending = false;
         this.chargerHistorique();
       },
-      error: (err) => {
-        console.error(err);
-        this.message.error("❌ Erreur lors de l'envoi au serveur Fly.io.");
+      error: () => {
+        this.message.error("❌ Erreur lors de l'envoi.");
         this.isSending = false;
+        this.cdr.detectChanges();
       }
     });
   }
