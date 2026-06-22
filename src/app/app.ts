@@ -58,10 +58,17 @@ export class App implements OnInit {
   }
 
   chargerHistorique() {
-    this.http.get<LettreDashboard[]>('https://lettres-amour-api-marine.fly.dev/api/lettres/admin').subscribe({
+    this.http.get<any>('https://lettres-amour-api-marine.fly.dev/api/lettres/admin').subscribe({
       next: (data) => {
-        console.log("🔥 DONNÉES REÇUES DU BACK :", data); // 👈 AJOUTE ÇA
-        this.historiqueLettres = data || [];
+        console.log("🔥 DONNÉES REÇUES DU BACK :", data);
+        
+        // Sécurité : Si FastEndpoints a encapsulé le tableau dans une propriété, on la récupère, sinon on prend data directement
+        const tableauLettres = Array.isArray(data) ? data : (data.lettres || data.value || []);
+        
+        // On réassigne une nouvelle référence propre pour réveiller le *ngFor d'Angular
+        this.historiqueLettres = [...tableauLettres];
+        
+        console.log("📊 Variable historiqueLettres mise à jour :", this.historiqueLettres);
       },
       error: (err) => {
         console.error("❌ ERREUR HTTP :", err);
