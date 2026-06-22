@@ -1,3 +1,5 @@
+@import "ng-zorro-antd/message/style/index.css";
+
 /* Un petit fond doux pour toute la page */
 body {
   background-color: #f8fafc;

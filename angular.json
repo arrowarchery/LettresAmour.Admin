@@ -25,7 +25,8 @@
                 "input": "public"
               }
             ],
-            "styles": [
+           "styles": [
+              "node_modules/ng-zorro-antd/message/style/index.css",
               "src/styles.css"
             ]
           },
