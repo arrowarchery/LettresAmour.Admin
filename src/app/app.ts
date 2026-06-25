@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; // 🚀 Ajoute ChangeDetectorRef ici
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; 
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -14,6 +14,8 @@ interface LettreDashboard {
   dateEnvoi: string;
   isLu: boolean;
   statut: string;
+  contenuReponse?: string; 
+  reponduLe?: string;
 }
 
 @Component({
@@ -35,9 +37,8 @@ export class App implements OnInit {
   historiqueLettres: LettreDashboard[] = [];
   lettreSelectionnee: LettreDashboard | null = null;
   
-  private apiUrl = 'https://lettres-amour-api-marine.fly.dev/api/lettres'; 
+  private apiUrl = 'https://lettresamour-api.onrender.com/api/lettres'; 
 
-  // 🚀 Ajoute private cdr: ChangeDetectorRef dans le constructeur
   constructor(private http: HttpClient, private message: NzMessageService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
@@ -62,7 +63,6 @@ export class App implements OnInit {
         this.historiqueLettres = [...tableauLettres];
         this.lettreSelectionnee = null;
 
-        // 🚀 LA LIGNE CRUCIALE : Réveille Angular de force et reconstruit le HTML
         this.cdr.detectChanges(); 
       },
       error: (err) => {
@@ -73,7 +73,7 @@ export class App implements OnInit {
 
   selectionnerLettre(l: LettreDashboard) {
     this.lettreSelectionnee = this.lettreSelectionnee?.id === l.id ? null : l;
-    this.cdr.detectChanges(); // Sécurité ici aussi
+    this.cdr.detectChanges(); 
   }
 
   envoyerLettre() {
@@ -83,9 +83,15 @@ export class App implements OnInit {
     this.http.post(this.apiUrl, this.lettre).subscribe({
       next: () => {
         this.message.success('La lettre a bien été enregistrée ! ✨', { nzDuration: 4000 });
-        this.lettre = { titre: '', contenu: '', dateEnvoi: null };
-        this.isSending = false;
-        this.chargerHistorique();
+        
+        setTimeout(() => {
+          this.lettre = { titre: '', contenu: '', dateEnvoi: null };
+          this.isSending = false;
+          
+          this.chargerHistorique();
+          
+          this.cdr.detectChanges();
+        }, 0);
       },
       error: () => {
         this.message.error("❌ Erreur lors de l'envoi.");

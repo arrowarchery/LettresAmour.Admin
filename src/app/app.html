@@ -102,7 +102,21 @@
         <div *ngIf="lettreSelectionnee?.id === l.id" 
              style="margin-top: 16px; padding-top: 16px; border-top: 1px dashed #e2e8f0; color: #475569; font-size: 14px; line-height: 1.6; white-space: pre-wrap; cursor: text;"
              (click)="$event.stopPropagation()">
-          {{ l.contenu }}
+          
+          <div style="margin-bottom: 12px;"><strong>Ta lettre :</strong> {{ l.contenu }}</div>
+          
+          <div *ngIf="l.contenuReponse" style="background: #fff0f3; padding: 16px; border-radius: 8px; border-left: 4px solid #ff4d6d;">
+            <div style="font-size: 12px; font-weight: 700; color: #ff4d6d; text-transform: uppercase; margin-bottom: 8px;">
+              Réponse de Marine 💝 (le {{ l.reponduLe | date:'dd/MM à HH:mm' }})
+            </div>
+            <div style="color: #4a1525; font-style: italic; white-space: pre-wrap;">
+              {{ l.contenuReponse }}
+            </div>
+          </div>
+
+          <div *ngIf="!l.contenuReponse && l.statut === 'Envoye'" style="color: #94a3b8; font-size: 13px; font-style: italic;">
+            En attente d'une réponse de Marine...
+          </div>
         </div>
 
       </div>
